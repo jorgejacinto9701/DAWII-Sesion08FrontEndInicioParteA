@@ -29,7 +29,7 @@ export class CrudDocenteComponent implements OnInit {
     dni:"",
     estado:1,
     ubigeo:{
-      idUbigeo: 0,
+      idUbigeo: -1,
       departamento:"-1",
       provincia:"-1",
       distrito:"-1",
@@ -46,12 +46,18 @@ export class CrudDocenteComponent implements OnInit {
       this.ubigeoService.listaProvincias(this.docente.ubigeo?.departamento).subscribe(
         response =>  this.provincias= response
       );
+
+      this.docente.ubigeo!.provincia ="-1";
+      this.distritos = [];  
+      this.docente.ubigeo!.idUbigeo =-1;
   }
 
   cargaDistrito(){
-    this.ubigeoService.listaDistritos(this.docente.ubigeo?.departamento, this.docente.ubigeo?.provincia).subscribe(
-      response =>  this.distritos= response
-     );
+      this.ubigeoService.listaDistritos(this.docente.ubigeo?.departamento, this.docente.ubigeo?.provincia).subscribe(
+        response =>  this.distritos= response
+      );
+
+      this.docente.ubigeo!.idUbigeo =-1;
    }
 
   ngOnInit(): void {
@@ -65,10 +71,10 @@ export class CrudDocenteComponent implements OnInit {
   }
 
   registra(){
-    console.log(">>> registra >> ");
-    this.docenteService.registraDocente(this.docente).subscribe(
-        x => Swal.fire('Mensaje', x.mensaje,'info')
-    )
+      console.log(">>> registra >> ");
+      this.docenteService.registraDocente(this.docente).subscribe(
+          x => Swal.fire('Mensaje', x.mensaje,'info')
+      )
   }
 
   busca(obj: Docente){
@@ -84,5 +90,37 @@ export class CrudDocenteComponent implements OnInit {
        );
   }
 
+  cambiaEstado(obj:Docente){
+      obj.estado =  obj.estado == 1 ? 0 : 1;
+      this.docenteService.actualizaDocente(obj).subscribe();
+  }
+
+  actualiza(){
+      console.log(">>> actualiza >> ");
+      this.docenteService.actualizaDocente(this.docente).subscribe(
+          x => Swal.fire('Mensaje', x.mensaje,'info')
+      )
+  }
+
+  elimina(obj :Docente){
+    console.log(">>> elimina >> ");
+    
+    Swal.fire({
+      title: 'Mensaje',
+      text: "¿Desea eliminar?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, elimine',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+            this.docenteService.eliminaDocente(obj.idDocente || 0).subscribe();
+      }
+    })
+
+    
+}
 
 }

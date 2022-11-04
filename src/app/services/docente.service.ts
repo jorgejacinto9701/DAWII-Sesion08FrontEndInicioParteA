@@ -24,4 +24,8 @@ export class DocenteService {
     return this.http.put(baseUrl + "/actualizaDocente", docente);
   }
 
+  eliminaDocente(idDocente : number): Observable<any>{
+    return this.http.delete(baseUrl + "/eliminaDocente/" + idDocente);
+  }
+
 }
