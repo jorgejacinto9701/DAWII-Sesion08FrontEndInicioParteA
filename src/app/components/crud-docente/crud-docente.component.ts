@@ -73,7 +73,14 @@ export class CrudDocenteComponent implements OnInit {
   registra(){
       console.log(">>> registra >> ");
       this.docenteService.registraDocente(this.docente).subscribe(
-          x => Swal.fire('Mensaje', x.mensaje,'info')
+          x => {  
+                   document.getElementById("btn_reg_limpiar")?.click();
+                   document.getElementById("btn_reg_cerrar")?.click(); 
+                   Swal.fire('Mensaje', x.mensaje,'info');
+                   this.docenteService.consultaDocente(this.filtro==""?"todos":this.filtro).subscribe(
+                      x => this.docentes = x
+                   ); 
+               }
       )
   }
 
@@ -98,7 +105,13 @@ export class CrudDocenteComponent implements OnInit {
   actualiza(){
       console.log(">>> actualiza >> ");
       this.docenteService.actualizaDocente(this.docente).subscribe(
-          x => Swal.fire('Mensaje', x.mensaje,'info')
+          x => {
+                document.getElementById("btn_act_cerrar")?.click(); 
+                Swal.fire('Mensaje', x.mensaje,'info');
+                this.docenteService.consultaDocente(this.filtro==""?"todos":this.filtro).subscribe(
+                    x => this.docentes = x
+                ); 
+            }
       )
   }
 
@@ -116,7 +129,14 @@ export class CrudDocenteComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-            this.docenteService.eliminaDocente(obj.idDocente || 0).subscribe();
+            this.docenteService.eliminaDocente(obj.idDocente || 0).subscribe(
+                  x =>{ 
+                          Swal.fire('Mensaje', x.mensaje,'info'); 
+                          this.docenteService.consultaDocente(this.filtro==""?"todos":this.filtro).subscribe(
+                              x => this.docentes = x
+                          ); 
+                      }
+            );
       }
     })
 
