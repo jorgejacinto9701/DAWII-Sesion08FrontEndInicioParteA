@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Docente } from 'src/app/models/docente.model';
 import { Ubigeo } from 'src/app/models/ubigeo.model';
 import { DocenteService } from 'src/app/services/docente.service';
@@ -36,6 +37,17 @@ export class CrudDocenteComponent implements OnInit {
     }
   };
 
+    //para verificar que e pulsó el boton
+    submitted = false;
+
+    formsRegistra = new FormGroup({
+      validaNombre: new FormControl('', [Validators.required, Validators.pattern('[a-zA-ZáéíóúÁÉÍÓÚñ0-9 ]{3,30}')]),
+      validaDni: new FormControl('', [Validators.required,Validators.pattern('[0-9]{8}')]),
+      validaDepartamento: new FormControl('', [Validators.min(1)]),
+      validaProvincia: new FormControl('', [Validators.min(1)]),
+      validaDistrito: new FormControl('', [Validators.min(1)]),
+  });
+  
   constructor(private docenteService:DocenteService, private ubigeoService:UbigeoService) {
       this.ubigeoService.listarDepartamento().subscribe(
           response => this.departamentos = response
@@ -71,6 +83,15 @@ export class CrudDocenteComponent implements OnInit {
   }
 
   registra(){
+      this.submitted = true;
+
+      //finaliza el método si hay un error
+      if (this.formsRegistra.invalid){
+           return;
+      }
+
+      this.submitted = false;
+
       console.log(">>> registra >> ");
       this.docenteService.registraDocente(this.docente).subscribe(
           x => {  
